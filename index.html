@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>재건축 동의서 제출 안내</title>
+    <!-- 구글 폰트 적용 (나눔고딕) -->
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root { --primary-color: #0056b3; --bg-color: #f8f9fa; }
+        body { font-family: 'Nanum Gothic', sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; color: #333; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        
+        /* 헤더 영역 */
+        header { background-color: var(--primary-color); color: white; padding: 40px 20px; text-align: center; }
+        header h1 { margin: 0; font-size: 24px; font-weight: 800; }
+        header p { margin: 10px 0 0; font-size: 16px; opacity: 0.9; }
+
+        /* 섹션 공통 */
+        section { padding: 30px 20px; border-bottom: 8px solid #eee; }
+        h2 { font-size: 20px; color: var(--primary-color); margin-bottom: 20px; display: flex; align-items: center; }
+        h2::before { content: '📍'; margin-right: 8px; }
+
+        /* 인증 창 스타일 (어르신 맞춤형) */
+        #authForm { text-align: center; padding: 40px 20px; }
+        .input-group { margin-bottom: 15px; }
+        input[type="tel"] { width: 100%; padding: 18px; font-size: 18px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .btn-auth { width: 100%; padding: 18px; font-size: 18px; background: #333; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .error-msg { color: #d9534f; margin-top: 15px; font-weight: bold; display: none; }
+
+        /* 영상/콘텐츠 영역 (처음엔 숨김) */
+        #protectedContent { display: none; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin-bottom: 20px; border-radius: 8px; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+        /* 안내 카드 */
+        .info-card { background: #f1f3f5; padding: 20px; border-radius: 10px; margin-bottom: 15px; }
+        .info-card h3 { margin-top: 0; font-size: 18px; }
+        .info-card ul { padding-left: 20px; margin-bottom: 0; }
+
+        /* 메인 버튼 */
+        .btn-main { display: block; background: #28a745; color: white; text-decoration: none; text-align: center; padding: 20px; font-size: 20px; font-weight: bold; border-radius: 10px; margin-top: 20px; transition: 0.3s; }
+        .btn-main:hover { background: #218838; }
+
+        footer { padding: 30px 20px; font-size: 13px; color: #888; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>재건축 동의서 제출 안내</h1>
+        <p>재건축 추진위원회 안내 페이지</p>
+    </header>
+
+    <!-- [1단계] 소유주 인증 구역 -->
+    <section id="authForm">
+        <h2>소유주 인증</h2>
+        <p style="margin-bottom:25px;">보안을 위해 <b>소유주 전화번호</b>를<br>숫자만 입력해 주세요.</p>
+        <div class="input-group">
+            <input type="tel" id="phoneInput" placeholder="예: 01012345678" maxlength="11">
+        </div>
+        <button class="btn-auth" onclick="verifyOwner()">확인 (영상 시청)</button>
+        <p id="errorMsg" class="error-msg">등록되지 않은 번호입니다.<br>준비위원회(010-XXXX-XXXX)로 문의 바랍니다.</p>
+    </section>
+
+    <!-- [2단계] 인증 성공 시 나타나는 실제 내용 -->
+    <div id="protectedContent">
+        <section>
+            <h2>제출 방법 안내 영상</h2>
+            <div class="video-container">
+                <!-- 유튜브 '일부공개' 영상 ID를 아래 '영상ID입력' 자리에 넣으세요 -->
+                <iframe src="https://youtube.com" allowfullscreen></iframe>
+            </div>
+            <div class="info-card">
+                <h3>주요 안내 사항</h3>
+                <ul>
+                    <li>제출 기간: 2026년 5월 2일 ~ 5월 31일</li>
+                    <li>대상: 아파트 소유자 전체</li>
+                    <li>온라인 본인인증이 필요합니다.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section style="border-bottom: none;">
+            <h2>동의서 바로가기</h2>
+            <p>아래 버튼을 누르면 전자동의 페이지로 이동합니다.</p>
+            <a href="여기에_전자동의서_링크_입력" class="btn-main">✍ 전자동의서 작성하기</a>
+        </section>
+    </div>
+
+    <footer>
+        OO아파트 재건축 추진준비위원회<br>
+        문의: 010-XXXX-XXXX (평일 10:00~18:00)
+    </footer>
+</div>
+
+<script>
+    // [중요] 전화번호 해시 리스트 (미리 변환된 값을 넣어야 안전함)
+    // 01012345678 등의 번호를 아래 해시 변환기로 변환해서 넣으세요.
+    const authorizedHashes = [
+        "59d45e76a666997424c57508316c026b911005a81665a044e5d6d876a3e6c0c2", // 예시: 01012345678
+        "해시값2", 
+        "해시값3"
+    ];
+
+    async function verifyOwner() {
+        const phone = document.getElementById('phoneInput').value.replace(/-/g, '');
+        if(!phone) return alert("전화번호를 입력해주세요.");
+
+        // 입력받은 번호를 SHA-256으로 해시화
+        const encoder = new TextEncoder();
+        const data = encoder.encode(phone);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashedInput = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        if (authorizedHashes.includes(hashedInput)) {
+            document.getElementById('authForm').style.display = 'none';
+            document.getElementById('protectedContent').style.display = 'block';
+            window.scrollTo(0,0);
+        } else {
+            document.getElementById('errorMsg').style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
