@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "iterations": 250000,
+  "salt": "751RQe7mXO6/0S6konNxxw==",
+  "entries": [
+    {
+      "iv": "H8nXCgAzLAZv/KHt",
+      "ct": "W617iqGd2JqZrVPAEvF+GUWxN/54nyk4TJkf"
+    },
+    {
+      "iv": "xRhK+JISS/FiQPPe",
+      "ct": "b8dNfj66RJM+CU18XfvQ2bKoghcYOO6l/PaS"
+    }
+  ]
+}
