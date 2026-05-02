@@ -10,7 +10,7 @@ const phoneInput = $("phone");
 const submitBtn = $("submit-btn");
 const statusEl = $("status");
 
-const CRED_SEP = "";
+const CRED_SEP = "";
 
 function setStatus(text, kind = "") {
   statusEl.textContent = text;
