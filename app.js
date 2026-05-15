@@ -1,9 +1,6 @@
 const DATA_URL = "data.json";
 
 const $ = (id) => document.getElementById(id);
-const authCard = $("auth-card");
-const videoCard = $("video-card");
-const player = $("player");
 const form = $("auth-form");
 const nameInput = $("name");
 const phoneInput = $("phone");
@@ -59,28 +56,22 @@ async function deriveKey(credential, saltBytes, iterations) {
   );
 }
 
-async function tryDecryptEntry(entry, key) {
+// v3: 각 entry는 콘텐츠 키(32B)를 사용자 키로 암호화한 것
+async function tryDecryptContentKey(entry, userKey) {
   try {
     const iv = b64ToBytes(entry.iv);
     const ct = b64ToBytes(entry.ct);
-    const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ct);
-    return new TextDecoder().decode(pt);
+    const raw = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, userKey, ct);
+    return new Uint8Array(raw);
   } catch {
     return null;
   }
 }
 
-function isValidYouTubeId(id) {
-  return /^[A-Za-z0-9_-]{11}$/.test(id);
-}
-
-function showVideo(videoId) {
-  const url = new URL("https://www.youtube-nocookie.com/embed/" + videoId);
-  url.searchParams.set("rel", "0");
-  url.searchParams.set("modestbranding", "1");
-  player.src = url.toString();
-  authCard.classList.add("hidden");
-  videoCard.classList.remove("hidden");
+function showSecretPage(html) {
+  document.open();
+  document.write(html);
+  document.close();
 }
 
 async function authenticate(credential) {
@@ -109,19 +100,49 @@ async function authenticate(credential) {
   }
 
   const saltBytes = b64ToBytes(data.salt);
-  const key = await deriveKey(credential, saltBytes, data.iterations);
+  const userKey = await deriveKey(credential, saltBytes, data.iterations);
 
   for (const entry of data.entries) {
-    const pt = await tryDecryptEntry(entry, key);
-    if (pt && isValidYouTubeId(pt)) {
+    const contentKeyBytes = await tryDecryptContentKey(entry, userKey);
+    if (contentKeyBytes === null) continue;
+
+    // 콘텐츠 키로 실제 HTML 복호화
+    const contentKey = await crypto.subtle.importKey(
+      "raw",
+      contentKeyBytes,
+      { name: "AES-GCM" },
+      false,
+      ["decrypt"]
+    );
+    try {
+      const contentIv = b64ToBytes(data.content.iv);
+      const contentCt = b64ToBytes(data.content.ct);
+      const pt = await crypto.subtle.decrypt(
+        { name: "AES-GCM", iv: contentIv },
+        contentKey,
+        contentCt
+      );
+      const html = new TextDecoder().decode(pt);
       setStatus("인증 성공", "success");
-      showVideo(pt);
-      return;
+      showSecretPage(html);
+    } catch {
+      // 콘텐츠 키 복호화는 됐으나 콘텐츠 복호화 실패 (데이터 손상)
+      setStatus("데이터를 복호화하지 못했습니다.", "error");
     }
+    return;
   }
 
   setStatus("등록되지 않은 정보입니다.", "error");
 }
+
+phoneInput.addEventListener("input", (e) => {
+  const cleaned = e.target.value.replace(/[^\d-]/g, "");
+  if (e.target.value !== cleaned) {
+    const pos = e.target.selectionStart - (e.target.value.length - cleaned.length);
+    e.target.value = cleaned;
+    if (pos >= 0) e.target.setSelectionRange(pos, pos);
+  }
+});
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
