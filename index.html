@@ -4,10 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
-    <!-- Android Chrome 주소창을 앱 배경색과 통일 -->
-    <meta name="theme-color" content="#0f1115" />
+    <!-- Android Chrome 주소창을 앱 배경색과 통일 (다크/라이트 자동 전환) -->
+    <meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f4f6f9" media="(prefers-color-scheme: light)" />
     <title>인증</title>
-    <link rel="stylesheet" href="style.css?v=9" />
+    <link rel="stylesheet" href="style.css?v=10" />
   </head>
   <body>
     <main class="card" id="auth-card">

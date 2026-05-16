@@ -132,7 +132,7 @@ async function authenticate(credential) {
     return;
   }
 
-  setStatus("등록되지 않은 정보입니다.", "error");
+  setStatus("등록되지 않은 정보입니다.\n아래 대표번호로 연락하여 소유주 등록을 해주세요.", "error");
 }
 
 phoneInput.addEventListener("input", (e) => {

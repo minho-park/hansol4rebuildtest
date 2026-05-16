@@ -1,3 +1,4 @@
+/* 다크모드 (기본) */
 :root {
   --bg: #0f1115;
   --surface: #1a1d24;
@@ -8,7 +9,23 @@
   --error: #ff6b6b;
   --success: #4ade80;
   --border: #2a2f3a;
-  --notice: #fbbf24;
+  --notice: #d97706;
+}
+
+/* 라이트모드 (기기 설정이 라이트일 때 자동 적용) */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f4f6f9;
+    --surface: #ffffff;
+    --text: #1a1d24;
+    --muted: #6b7280;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --error: #dc2626;
+    --success: #16a34a;
+    --border: #e2e6ed;
+    --notice: #b45309;
+  }
 }
 
 * {
@@ -20,7 +37,7 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   /* 다크 테마임을 브라우저에 명시 (스크롤바·입력창 등 시스템 UI 반영) */
-  color-scheme: dark;
+  color-scheme: dark light;
 }
 
 html,
@@ -147,6 +164,7 @@ button:disabled {
   font-size: 13px;
   color: var(--muted);
   text-align: center;
+  white-space: pre-line;
 }
 
 .status.error   { color: var(--error); }
