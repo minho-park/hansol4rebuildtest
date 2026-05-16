@@ -4,8 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>인증 영상</title>
-    <link rel="stylesheet" href="style.css" />
+    <!-- Android Chrome 주소창을 앱 배경색과 통일 -->
+    <meta name="theme-color" content="#0f1115" />
+    <title>인증</title>
+    <link rel="stylesheet" href="style.css?v=9" />
   </head>
   <body>
     <main class="card" id="auth-card">
@@ -25,28 +27,21 @@
           name="phone"
           type="tel"
           inputmode="numeric"
-          placeholder="01012345678"
+          placeholder="010-1234-5678"
+          pattern="[0-9\-]*"
           required
           autocomplete="off"
         />
         <button id="submit-btn" type="submit">확인</button>
       </form>
       <p id="status" class="status" role="status" aria-live="polite"></p>
-    </main>
 
-    <main class="video-wrap hidden" id="video-card">
-      <div class="video-frame">
-        <iframe
-          id="player"
-          src=""
-          title="영상"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
-        ></iframe>
+      <div class="notice">
+        <p class="notice-text">소유주 인증이 필요하신 분은 대표번호로 연락 바랍니다.</p>
+        <a href="tel:01012345678" class="notice-phone">대표번호: 010-1234-5678</a>
       </div>
     </main>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=8"></script>
   </body>
 </html>

@@ -8,10 +8,19 @@
   --error: #ff6b6b;
   --success: #4ade80;
   --border: #2a2f3a;
+  --notice: #fbbf24;
 }
 
 * {
   box-sizing: border-box;
+}
+
+html {
+  /* 화면 회전 시 iOS/Android 자동 글자 크기 변경 방지 */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* 다크 테마임을 브라우저에 명시 (스크롤바·입력창 등 시스템 UI 반영) */
+  color-scheme: dark;
 }
 
 html,
@@ -20,101 +29,192 @@ body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
-    "Noto Sans KR", sans-serif;
+  /* Android: Roboto → Noto Sans KR / iOS: Apple SD Gothic Neo / 공통: sans-serif */
+  font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   min-height: 100vh;
+  min-height: 100dvh; /* iOS/Android 주소창 높이 변화 대응 */
+  /* Android Chrome pull-to-refresh 방지 */
+  overscroll-behavior-y: contain;
 }
 
 body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 20px 16px;
+  padding-top: max(20px, env(safe-area-inset-top));
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
 }
 
+/* ── 카드 ── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 32px 28px;
+  border-radius: 16px;
+  padding: 32px 20px 28px;
   width: 100%;
-  max-width: 380px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
 .card h1 {
-  margin: 0 0 6px;
+  margin: 0 0 8px;
   font-size: 22px;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .hint {
   margin: 0 0 20px;
   color: var(--muted);
   font-size: 14px;
+  line-height: 1.5;
+  /* 한국어: 어절 중간 줄바꿈 방지 (Android/iOS 공통) */
+  word-break: keep-all;
 }
 
+/* ── 폼 ── */
 #auth-form {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
+input[type="text"],
 input[type="tel"] {
+  width: 100%;
   background: var(--bg);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px 14px;
+  border-radius: 10px;
+  padding: 0 16px;
+  height: 52px;
+  /* 16px 미만이면 iOS/일부 Android에서 input 탭 시 자동 확대 */
   font-size: 16px;
+  font-family: inherit;
   outline: none;
-  transition: border-color 120ms ease;
+  transition: border-color 150ms ease;
+  /* iOS 기본 입력창 스타일 제거 */
+  -webkit-appearance: none;
+  appearance: none;
+  /* 더블탭 확대 방지 + 300ms 딜레이 제거 (Android 구버전 포함) */
+  touch-action: manipulation;
 }
 
+input[type="text"]:focus,
 input[type="tel"]:focus {
   border-color: var(--accent);
 }
 
-button {
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 14px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 120ms ease;
-}
-
-button:hover:not(:disabled) {
-  background: var(--accent-hover);
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.status {
-  margin: 14px 0 0;
-  min-height: 20px;
-  font-size: 13px;
+input::placeholder {
   color: var(--muted);
 }
 
-.status.error {
-  color: var(--error);
+button {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  height: 52px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: background 150ms ease, opacity 150ms ease;
+  /* iOS/Android 탭 시 파란 하이라이트 제거 */
+  -webkit-tap-highlight-color: transparent;
+  /* 더블탭 확대 방지 + 300ms 딜레이 제거 */
+  touch-action: manipulation;
+  /* 길게 눌러도 텍스트 선택 안 됨 (Android) */
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.status.success {
-  color: var(--success);
+button:active:not(:disabled) {
+  opacity: 0.82;
 }
 
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── 상태 메시지 ── */
+.status {
+  margin: 12px 0 0;
+  min-height: 18px;
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.status.error   { color: var(--error); }
+.status.success { color: var(--success); }
+
+/* ── 안내 문구 ── */
+.notice {
+  margin-top: 20px;
+  padding: 14px 16px;
+  background: rgba(251, 191, 36, 0.07);
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.notice-text {
+  margin: 0;
+  font-size: 13px;
+  color: var(--notice);
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+/* 전화번호: 탭 한 번으로 전화 연결 + 링크임을 명확히 표시 */
+.notice-phone {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--notice);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  letter-spacing: 0.04em;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── hover: 마우스/트랙패드 기기에서만 적용 ──
+   min-width 기준으로 하면 Android 태블릿에서
+   터치 후 hover 상태가 유지되는 버그 발생 */
+@media (hover: hover) and (pointer: fine) {
+  button:hover:not(:disabled) {
+    background: var(--accent-hover);
+  }
+  button:active:not(:disabled) {
+    opacity: 1;
+  }
+  .notice-phone:hover {
+    opacity: 0.8;
+  }
+}
+
+/* ── 넓은 화면 레이아웃 보정 (태블릿·PC) ── */
+@media (min-width: 480px) {
+  body {
+    padding: 40px 24px;
+  }
+  .card {
+    padding: 36px 32px 32px;
+  }
+}
+
+/* ── 공통 유틸 ── */
 .hidden {
   display: none !important;
 }
 
+/* ── 비공개 페이지용 (video 등) ── */
 .video-wrap {
   width: 100%;
   max-width: 960px;
