@@ -1,4 +1,5 @@
 const DATA_URL = "data.json";
+const ITER = 250000;
 
 const $ = (id) => document.getElementById(id);
 const form = $("auth-form");
@@ -56,7 +57,6 @@ async function deriveKey(credential, saltBytes, iterations) {
   );
 }
 
-// v3: 각 entry는 콘텐츠 키(32B)를 사용자 키로 암호화한 것
 async function tryDecryptContentKey(entry, userKey) {
   try {
     const iv = b64ToBytes(entry.iv);
@@ -94,19 +94,18 @@ async function authenticate(credential) {
     return;
   }
 
-  if (!data || !data.salt || !data.iterations || !Array.isArray(data.entries)) {
+  if (!data || !data.salt || !Array.isArray(data.entries)) {
     setStatus("데이터 형식이 올바르지 않습니다.", "error");
     return;
   }
 
   const saltBytes = b64ToBytes(data.salt);
-  const userKey = await deriveKey(credential, saltBytes, data.iterations);
+  const userKey = await deriveKey(credential, saltBytes, data.iterations ?? ITER);
 
   for (const entry of data.entries) {
     const contentKeyBytes = await tryDecryptContentKey(entry, userKey);
     if (contentKeyBytes === null) continue;
 
-    // 콘텐츠 키로 실제 HTML 복호화
     const contentKey = await crypto.subtle.importKey(
       "raw",
       contentKeyBytes,
@@ -133,6 +132,7 @@ async function authenticate(credential) {
   }
 
   setStatus("등록되지 않은 정보입니다.\n아래 대표번호로 연락하여 소유주 등록을 해주세요.", "error");
+  setStatus("등록되지 않은 정보입니다.", "error");
 }
 
 phoneInput.addEventListener("input", (e) => {
